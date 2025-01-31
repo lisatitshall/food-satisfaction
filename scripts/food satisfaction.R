@@ -77,3 +77,108 @@ food_satisfaction_amended <- food_satisfaction_amended %>%
         Awareness_probe_2:
           Awareness_probe_2_cont,
         sep = "")
+
+#some people were excluded from the study because they didn't 
+# fulfill all the criteria, how many?
+#11 + 4 + 2 + 1 = 18
+sum(food_satisfaction_amended$Lunch_exclusion)
+sum(food_satisfaction_amended$Ate_between_exclusion)
+sum(food_satisfaction_amended$Rehearsal_exclu)
+sum(food_satisfaction_amended$Use_of_phone_exclu)
+
+#remove these values and columns because this data shouldn't be analysed
+food_satisfaction_amended <- food_satisfaction_amended %>% 
+  filter(Lunch_exclusion == 0 &
+           Ate_between_exclusion == 0 &
+           Rehearsal_exclu == 0 &
+           Use_of_phone_exclu == 0) %>% 
+  select(Sens_exclu_aims:Satisfaction_satiety)
+
+#look at correlation between satisfaction metrics
+#reverse coded -1 as expected
+#looks like satisfaction / taste / like combined to get general satisfaction
+#filling used for satisfaction satiety
+View(cor(food_satisfaction_amended %>% 
+      select(Lunch_memory_satisfying:Lunch_memory_liked,
+             General_satisfaction:Satisfaction_satiety)))
+
+#look at easier case first
+View(food_satisfaction_amended %>% select(Lunch_memory_satisfied_filling,
+                                          Lunch_memory_dissatisfied_filling_R,
+                                          Satisfaction_satiety))
+
+#average of satisfied filling / dissatisfied filling reverse coded is
+# satisfaction satiety, yes
+View(food_satisfaction_amended %>% 
+       select(Lunch_memory_satisfied_filling,
+              Lunch_memory_dissatisfied_filling_R,
+              Satisfaction_satiety) %>%
+  filter(Satisfaction_satiety !=
+           (Lunch_memory_satisfied_filling 
+            + Lunch_memory_dissatisfied_filling_R) / 2))
+
+#guess that general satisfaction is average of 
+# memory satisfaction, dissatisfaction reverse, taste satisfaction, 
+# dissatisfaction reverse and liked
+#check, yeah
+View(food_satisfaction_amended %>% 
+       select(Lunch_memory_satisfying,
+              Lunch_memory_dissastisfying_R,
+              Lunch_memory_satisfied_taste,
+              Lunch_memory_dissatisfied_taste_R,
+              Lunch_memory_liked,
+              General_satisfaction) %>%
+       filter(General_satisfaction !=
+                (Lunch_memory_satisfying +
+                   Lunch_memory_dissastisfying_R +
+                   Lunch_memory_satisfied_taste +
+                   Lunch_memory_dissatisfied_taste_R +
+                   Lunch_memory_liked) / 5))
+
+
+#remove columns which are calculated from each other
+food_satisfaction_amended <- food_satisfaction_amended %>%
+  select(!starts_with("Lunch_memory"))
+
+#look at correlation of TFEQ variables, not enough to exclude any
+View(cor(food_satisfaction_amended %>% select(Cognitive_restraint,
+                                              Uncontrolled_eating,
+                                              Emotional_eating)))
+
+#order of actions:
+# answer pre-lunch hunger question
+# eat lunch
+# complete satisfying / dissatisfying description
+# answer post-lunch hunger question
+# BREAK
+# answer pre-taste test hunger question
+# complete taste test
+# answer post-taste test hunger question
+# answer lunchtime memory satisfaction questions
+# answer TFEQ, demographic, study intention questions, measure BMI
+
+
+#visualization ideas:
+#univariate first to understand values:
+# age groupings to see if good range (bar by category)
+# BMI to see if any outliers (box plot)
+# distribution of pre/post lunch and taste test hunger (freqpoly)
+# snack kcal to see if any outliers (box plot)
+# distribution of general satisfaction and satiety 
+#multivariate:
+# plot pre/post lunch hunger by condition (scatter)
+#    also include whether people described the opposite 
+# same as above but for pre/post taste test hunger (scatter)
+# plot biscuit consumption by condition (boxplots)
+#    also include whether people described the opposite 
+# plot general satisfaction by condition (boxplots)
+#    also include whether people described the opposite
+# same as above but for satisfaction satiety
+# repeat visuals for people who guessed study intention, diff results??
+# look into demographics:
+  # plot age against difference in pre/post lunch hunger (scatter)
+  # plot age against biscuit consumption (scatter)
+  # plot age against general satisfaction / satiety (scatter)
+  # same as above for BMI
+# look into TFEQ measures:
+  # same plots as age

@@ -19,3 +19,12 @@ Full details of the study can be found in the Data folder.
   -   Merging character columns
   -   Removing participants who didn't fulfill all the study requirements
   -   Understanding the correlation/link between the lunch memory questions and removing values calculated from each other
+- Step 2: Visualize single variables to understand distributions. Findings:
+  - 18-24 year olds account for more than half of the participants
+  - Three BMI's are outliers
+  - The biscuits consumed distribution is slightly positively skewed
+  - Participants were generally hungrier before lunch than the taste test and were less hungry after lunch than the taste test (not surprising given amount of food and time of day)
+  - Participants generally remembered being full after lunch but there was a wider range of satisfaction levels (again, not surprising, you can be full without particularly enjoying a meal)
+
+## Findings
+

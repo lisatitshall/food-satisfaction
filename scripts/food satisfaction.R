@@ -14,12 +14,12 @@ food_satisfaction_raw <- read_sav("data/RememberedMealSatisfaction.sav")
 #data is either a double or a character
 #some character columns seem to be split, data limit in SPSS?
 #some data has been reverse coded 
-#need to understand what cognitive restraint, uncontrolled/emotional eating mean
+#need to understand what cognitive restraint/uncontrolled/emotional eating mean
 glimpse(food_satisfaction_raw)
 
 #looks like ID column is NA only, investigate nulls
 #ID is null, drop
-#minor nulls in age/gender/BMI/Height/Weight that don't impact study
+#minor nulls in age/gender/BMI/Height/Weight that don't really impact study
 #minor nulls in more important columns
 View(food_satisfaction_raw %>% 
        summarize(across(everything(), ~sum(is.na(.x))))) 
@@ -182,3 +182,57 @@ View(cor(food_satisfaction_amended %>% select(Cognitive_restraint,
   # same as above for BMI
 # look into TFEQ measures:
   # same plots as age
+
+# Visualizations -------------------------
+
+# add age category 
+food_satisfaction_amended$AgeGroup <-
+  case_when(food_satisfaction_amended$Age <= 24 ~ "18-24",
+            food_satisfaction_amended$Age <= 34 ~ "25-34",
+            food_satisfaction_amended$Age <= 44 ~ "35-44",
+            .default = "45-60")
+str(food_satisfaction_amended$AgeGroup)
+food_satisfaction_amended$AgeGroup <- factor(food_satisfaction_amended$AgeGroup)
+
+# plot bar chart of age categories
+# as expected more younger participants
+ggplot(food_satisfaction_amended, aes(x = AgeGroup)) +
+  geom_bar() +
+  theme_bw() +
+  labs(y = "Count of participants")
+
+#boxplot of BMI
+boxplot(food_satisfaction_amended$BMI, 
+        horizontal = TRUE,
+        xlab = "BMI")
+
+#distribution of pre/post lunch hunger
+ggplot(food_satisfaction_amended) +
+  geom_density(aes(Hunger_pre_lunch), colour = "red", linewidth = 1) +
+  geom_density(aes(Hunger_post_lunch), colour = "blue", linewidth = 1) +
+  theme_bw() +
+  labs(x = "Pre / post lunch hunger (red = pre)")
+
+#distribution of pre/post taste test hunger
+#hunger is generally lower to start but doesn't decrease as much 
+ggplot(food_satisfaction_amended) +
+  geom_density(aes(Hunger_pre_taste_test), colour = "red", linewidth = 1) +
+  geom_density(aes(Hunger_post_taste_test), colour = "blue", linewidth = 1) +
+  theme_bw() +
+  labs(x = "Pre / post taste test hunger (red = pre)")
+
+#boxplot of biscuit kcal consumed
+#no outliers, amount was controlled, slight positive skew
+boxplot(food_satisfaction_amended$Snack_kcal, 
+        horizontal = TRUE,
+        xlab = "Biscuits consumed (kcal)")
+mean(food_satisfaction_amended$Snack_kcal)
+median(food_satisfaction_amended$Snack_kcal)
+
+#distribution of general satisfaction / satiety (memory)
+#generally participants remembered being full but range of satisfaction
+ggplot(food_satisfaction_amended) +
+  geom_density(aes(General_satisfaction), colour = "red", linewidth = 1) +
+  geom_density(aes(Satisfaction_satiety), colour = "blue", linewidth = 1) +
+  theme_bw() +
+  labs(x = "Memory of lunch (red = general satisfaction, blue = satiety)")

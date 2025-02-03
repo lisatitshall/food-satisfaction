@@ -309,6 +309,16 @@ ggplot(food_satisfaction_amended, aes(x = Hunger_pre_taste_test,
   labs(x = "Pre taste test hunger", y = "Post taste test hunger", 
        colour = "Condition")
 
+ggplot(food_satisfaction_amended, 
+       aes(x = (Hunger_post_taste_test - Hunger_pre_taste_test),
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "Difference in pre/post taste test hunger", 
+       colour = "Condition")
+
+
 #plot biscuit consumption by condition
 #lots of overlap, all slightly positive skew
 boxplot(Snack_kcal ~ Condition, 
@@ -503,3 +513,83 @@ ggplot(food_satisfaction_amended, aes(x = Emotional_eating,
   facet_wrap(~Condition) +
   theme_bw() +
   labs(x = "TFEQ emotional eating", y = "Biscuits consumed (kcal)")
+
+#most promising measures for statistical analysis:
+#  remembered lunch satisfaction by condition and accurate description
+
+#difference in pre/post lunch hunger by category wasn't significant but 
+# interesting to see ANOVA results
+
+#Statistics --------------------------------
+#ANOVA assumptions
+#Samples follow normal distribution (or n > 30)
+#Samples have equal variance
+#Samples are independent
+
+#Test pre/post lunch hunger by category
+#We've already seen neutral moderately skewed, positive/negative symmetric
+#Test variance, same
+bartlett.test(Hunger_pre_lunch - Hunger_post_lunch ~ Condition, 
+              data = food_satisfaction_amended)
+
+#ANOVA, no difference for all participants, as expected
+aov_lunch_hunger_diff <- aov(Hunger_pre_lunch - Hunger_post_lunch ~ Condition, 
+                             data = food_satisfaction_amended)
+summary(aov_lunch_hunger_diff)
+
+#test general satisfaction
+#distributions are skewed in this case, try Kruskal Wallis 
+
+#same variances
+bartlett.test(General_satisfaction ~ Condition, 
+              data = food_satisfaction_amended)
+
+#not quite significant
+kruskal.test(General_satisfaction ~ Condition, 
+             data = food_satisfaction_amended)
+
+#only participants who described what they were asked
+#variances are the same
+bartlett.test(General_satisfaction ~ Condition, 
+              data = food_satisfaction_amended %>% 
+                filter(Rehearsal_exclu_exploratory == 0))
+
+#yes, significant now
+kruskal.test(General_satisfaction ~ Condition, 
+             data = food_satisfaction_amended %>% 
+                               filter(Rehearsal_exclu_exploratory == 0))
+
+#check two remaining outcomes for completeness although visuals
+# show there wouldn't be a relationship
+
+#pre/post taste test hunger by condition
+#plots look approx normal
+#Test variance, same
+bartlett.test(Hunger_pre_taste_test - Hunger_post_taste_test ~ Condition, 
+              data = food_satisfaction_amended)
+
+#ANOVA, no difference for all participants, as expected
+aov_taste_test_hunger_diff <- aov(
+  Hunger_pre_taste_test - Hunger_post_taste_test ~ Condition, 
+                             data = food_satisfaction_amended)
+summary(aov_taste_test_hunger_diff)
+
+
+#biscuit consumption by condition
+#plots look approx normal
+
+#Test variance, same
+bartlett.test(Snack_kcal ~ Condition, 
+              data = food_satisfaction_amended)
+
+#ANOVA, no difference for all participants, as expected
+aov_snack_kcal_diff <- aov(
+  Snack_kcal ~ Condition, 
+  data = food_satisfaction_amended)
+summary(aov_snack_kcal_diff)
+
+#Ideas: look at tree / principal component analysis to see which measures  
+#are most important in determining biscuit consumption / changes in hunger/
+#general satisfaction
+#this would include looking at raw hunger levels rather than differences
+

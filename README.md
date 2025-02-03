@@ -68,6 +68,11 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 
 - BMI doesn't seem to be an important measure. Although participants with a higher BMI were more likely to be in the satisfying rehearsal group removing BMI's over 30 didn't significantly change any of the relationships.
 
-- There does seem to be some relationship between the TFEQ measures and participant behaviour. For example, participants that had a higher cognitive restraint score ate less biscuits in all groups (see chart below).
+- There does seem to be a slight relationship between the TFEQ measures and participant behaviour. For example, participants that had a higher cognitive restraint score ate less biscuits in all groups (see chart below). However, this is only likely to be weak correlation. 
 
 ![TFEQ cognitive restraint vs biscuit consumption](https://github.com/user-attachments/assets/5f352347-9718-42f1-882d-5a1c52df1ffa)
+
+- ANOVA or Kruskal Wallis tests (depending on the assumptions) were performed to test whether the outcomes differed by condition. The only significant result was the Kruskal Wallis test on remembered lunch satisfaction only for participants who described what they were asked to (see screenshot below). This confirms what the visualizations showed us intuitively. 
+
+![kruskal wallis general satisfaction by condition](https://github.com/user-attachments/assets/00b79af7-7f83-4bea-92b7-bb093c1b8338)
+

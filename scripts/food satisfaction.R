@@ -2,6 +2,8 @@
 library(tidyverse)
 #import SPSS data
 library(haven)
+#skewness
+library(moments)
 
 #import data
 food_satisfaction_raw <- read_sav("data/RememberedMealSatisfaction.sav")
@@ -236,3 +238,161 @@ ggplot(food_satisfaction_amended) +
   geom_density(aes(Satisfaction_satiety), colour = "blue", linewidth = 1) +
   theme_bw() +
   labs(x = "Memory of lunch (red = general satisfaction, blue = satiety)")
+
+#change variables to factors
+food_satisfaction_amended$Condition <- 
+  factor(food_satisfaction_amended$Condition)
+
+food_satisfaction_amended$Rehearsal_exclu_exploratory <- 
+  factor(food_satisfaction_amended$Rehearsal_exclu_exploratory)
+
+food_satisfaction_amended$Sens_exclu_aims <- 
+  factor(food_satisfaction_amended$Sens_exclu_aims)
+
+#plot pre/post lunch hunger against category
+#as we'd expect negative descriptions(2) are more hungry after lunch
+ggplot(food_satisfaction_amended, aes(x = Hunger_pre_lunch, 
+                                      y = Hunger_post_lunch,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "Pre lunch hunger", y = "Post lunch hunger", colour = "Condition")
+
+
+#plot difference between pre/post lunch as boxplots
+#lots of overlap, negative looks negative skewed, neutral positive skew
+#positive looks symmetrical
+boxplot((Hunger_post_lunch - Hunger_pre_lunch) ~ Condition, 
+        data = food_satisfaction_amended, xlab = "Condition", 
+        ylab = "Difference in pre/post lunch hunger") 
+
+#plot distributions
+ggplot(food_satisfaction_amended, 
+       aes(x = (Hunger_post_lunch - Hunger_pre_lunch),
+                                      after_stat(density),
+                                      colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "Difference in pre/post lunch hunger", 
+       colour = "Condition")
+
+#skewness, negative is roughly symmetric, neutral is moderate positive skew
+negative <- food_satisfaction_amended %>% filter(Condition == 2)
+neutral <- food_satisfaction_amended %>% filter(Condition == 0)
+skewness(negative$Hunger_post_lunch - negative$Hunger_pre_lunch)
+skewness(neutral$Hunger_post_lunch - neutral$Hunger_pre_lunch)
+
+#are the results clearer if we look at people who described the opposite?
+#no, they're more confused, we'd expect negative condition who describe
+# positive to be less hungry after lunch, but they're more hungry
+ggplot(food_satisfaction_amended, aes(x = Hunger_pre_lunch, 
+                                      y = Hunger_post_lunch,
+                                      color = Rehearsal_exclu_exploratory))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "Pre lunch hunger", y = "Post lunch hunger", 
+       colour = "Explained opposite")
+
+#same plot for but pre/post taste test hunger
+#no difference at all between groups
+ggplot(food_satisfaction_amended, aes(x = Hunger_pre_taste_test, 
+                                      y = Hunger_post_taste_test,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "Pre taste test hunger", y = "Post taste test hunger", 
+       colour = "Condition")
+
+#plot biscuit consumption by condition
+#lots of overlap, all slightly positive skew
+boxplot(Snack_kcal ~ Condition, 
+        data = food_satisfaction_amended, xlab = "Condition", 
+        ylab = "Biscuits consumed (kcal)") 
+
+#boxplot losing too much information, try jitter, no difference
+ggplot(food_satisfaction_amended, aes(x = Condition,
+                                      y = Snack_kcal
+                                      )) +
+  geom_jitter() +
+  theme_bw()
+
+#plot biscuit consumption distributions
+ggplot(food_satisfaction_amended, 
+       aes(x = Snack_kcal,
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "Biscuits consumed (kcal)", 
+       colour = "Condition")
+
+#any difference removing people who described opposite? No
+boxplot(Snack_kcal ~ Condition, 
+        data = food_satisfaction_amended %>% 
+          filter(Rehearsal_exclu_exploratory == 0), 
+        xlab = "Condition", 
+        ylab = "Biscuits consumed (kcal)") 
+
+ggplot(food_satisfaction_amended %>% 
+         filter(Rehearsal_exclu_exploratory == 0), 
+       aes(x = Snack_kcal,
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "Biscuits consumed (kcal)", 
+       colour = "Condition")
+
+#plot remembered satisfaction by category
+boxplot(General_satisfaction ~ Condition, 
+        data = food_satisfaction_amended, 
+        xlab = "Condition", 
+        ylab = "Remembered lunch satisfaction") 
+
+ggplot(food_satisfaction_amended, 
+       aes(x = General_satisfaction,
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "General satisfaction", 
+       colour = "Condition")
+
+#remembered satisfaction by category and accurate reflection
+boxplot(General_satisfaction ~ Condition, 
+        data = food_satisfaction_amended %>% 
+          filter(Rehearsal_exclu_exploratory == 0), 
+        xlab = "Condition", 
+        ylab = "Remembered lunch satisfaction") 
+
+ggplot(food_satisfaction_amended %>% 
+         filter(Rehearsal_exclu_exploratory == 0), 
+       aes(x = General_satisfaction,
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "General satisfaction", 
+       colour = "Condition")
+
+#remembered satiety by category 
+#(not much difference when excluding those that described opposite)
+boxplot(Satisfaction_satiety ~ Condition, 
+        data = food_satisfaction_amended, 
+        xlab = "Condition", 
+        ylab = "Remembered lunch satiety") 
+
+ggplot(food_satisfaction_amended, 
+       aes(x = Satisfaction_satiety,
+           after_stat(density),
+           colour = Condition)) +
+  geom_density() +
+  theme_bw() +
+  labs(x = "Remembered lunch satiety", 
+       colour = "Condition")

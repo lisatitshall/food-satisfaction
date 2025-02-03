@@ -65,3 +65,9 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 - Age does seem to have an impact on pre/post hunger levels (for example, in the charts below we can see that 18-24 year olds are hungrier after lunch even in the neutral group). However, because there were a lot more younger participants in the study it may be difficult to test this statistically.
   
 ![image](https://github.com/user-attachments/assets/504eb9ff-b99d-4487-b4b3-b302f19d8c71)
+
+- BMI doesn't seem to be an important measure. Although participants with a higher BMI were more likely to be in the satisfying rehearsal group removing BMI's over 30 didn't significantly change any of the relationships.
+
+- There does seem to be some relationship between the TFEQ measures and participant behaviour. For example, participants that had a higher cognitive restraint score ate less biscuits in all groups (see chart below).
+
+![TFEQ cognitive restraint vs biscuit consumption](https://github.com/user-attachments/assets/5f352347-9718-42f1-882d-5a1c52df1ffa)

@@ -396,3 +396,110 @@ ggplot(food_satisfaction_amended,
   theme_bw() +
   labs(x = "Remembered lunch satiety", 
        colour = "Condition")
+
+#how much do these results change if we exclude people who guessed 
+# the study intentions?
+#There are only three people who met this criteria so the results are
+#unlikely to substantially change
+
+#at the moment seems only significant difference would be general satisfaction
+# of people who described what they were supposed to and 
+# even that may not be statistically significant
+# (also: whether people liked/didn't like the food was more important
+# than being told to reflect one way or the other)
+
+#do demographics / food personalities play any part in results?
+
+#age and pre/post lunch hunger
+ggplot(food_satisfaction_amended, aes(x = Hunger_pre_lunch, 
+                                      y = Hunger_post_lunch,
+                                      color = AgeGroup,
+                                      shape = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_grid(rows = vars(Condition),
+             cols = vars(AgeGroup)) +
+  theme_bw() +
+  labs(x = "Pre lunch hunger", y = "Post lunch hunger", colour = "Age Group")
+
+
+boxplot(Hunger_pre_lunch - Hunger_post_lunch ~ AgeGroup, 
+        data = food_satisfaction_amended, 
+        xlab = "Age Group", 
+        ylab = "Difference between pre and post lunch hunger") 
+
+#age and biscuit consumption
+boxplot(Snack_kcal ~ AgeGroup, 
+        data = food_satisfaction_amended, 
+        xlab = "Age Group", 
+        ylab = "Biscuits consumed (kcal)") 
+
+#age and general satisfaction
+boxplot(General_satisfaction ~ AgeGroup, 
+        data = food_satisfaction_amended, 
+        xlab = "Age Group", 
+        ylab = "Remembered lunch satisfaction") 
+
+#bmi and biscuit consumption
+#NHS say above 30 BMI is obese, these people are mainly in positive group
+ggplot(food_satisfaction_amended, aes(x = BMI, 
+                                      y = Snack_kcal,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "BMI", y = "Biscuit Consumption (kcal)")
+
+#what would happen if we looked at BMI below 30
+#positive group has greater decrease in hunger but still
+# doesn't look statistically significant
+boxplot((Hunger_post_lunch - Hunger_pre_lunch) ~ Condition, 
+        data = food_satisfaction_amended %>% filter(BMI < 30), 
+        xlab = "Condition", 
+        ylab = "Difference in pre/post lunch hunger") 
+
+#no change
+boxplot(Snack_kcal ~ Condition, 
+        data = food_satisfaction_amended %>% filter(BMI < 30), 
+        xlab = "Condition", 
+        ylab = "Biscuits consumed (kcal)") 
+
+#little change
+boxplot(General_satisfaction ~ Condition, 
+        data = food_satisfaction_amended %>% filter(BMI < 30), 
+        xlab = "Condition", 
+        ylab = "Remembered lunch satisfacion") 
+
+
+#look at TFEQ measures, cognitive restraint
+# most useful in looking at biscuit consumption
+# slight downward trend in all groups
+ggplot(food_satisfaction_amended, aes(x = Cognitive_restraint, 
+                                      y = Snack_kcal,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "TFEQ cognitive restraint", y = "Biscuits consumed (kcal)")
+
+#TFEQ uncontrolled eating, higher upward trend in negative group
+ggplot(food_satisfaction_amended, aes(x = Uncontrolled_eating, 
+                                      y = Snack_kcal,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "TFEQ uncontrolled eating", y = "Biscuits consumed (kcal)")
+
+#TFEQ uncontrolled eating
+ggplot(food_satisfaction_amended, aes(x = Emotional_eating, 
+                                      y = Snack_kcal,
+                                      color = Condition))+
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  facet_wrap(~Condition) +
+  theme_bw() +
+  labs(x = "TFEQ emotional eating", y = "Biscuits consumed (kcal)")

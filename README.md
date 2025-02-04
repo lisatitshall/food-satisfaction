@@ -76,3 +76,8 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 
 ![kruskal wallis general satisfaction by condition](https://github.com/user-attachments/assets/00b79af7-7f83-4bea-92b7-bb093c1b8338)
 
+- A recursive partitioning tree was fitted to predict biscuit consumption. After pruning only two variables remained: hunger pre taste test and cognitive restraint (see tree below). However, these variables only explained around 28% of the variation in biscuit consumption. Interestingly, condition wasn't chosen as a factor that influences biscuit consumption even in the larger tree. Also, the surrogate splits identified correlated variables that could be used instead of the chosen variables. For example, remembered lunchtime satiety was linked to the chosen variable "hunger pre taste test". 
+
+![image](https://github.com/user-attachments/assets/50fb436c-e23e-4712-ada8-a00e11c7cfbf)
+
+

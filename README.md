@@ -26,6 +26,7 @@ Full details of the study can be found in the Data folder.
   - Participants were generally hungrier before lunch than the taste test and were less hungry after lunch than the taste test (not surprising given amount of food and time of day)
   - Participants generally remembered being full after lunch but there was a wider range of satisfaction levels (again, not surprising, you can be full without particularly enjoying a meal)
 - Step 3: Plot multivariate graphs to look for relationships
+- Step 4: Fit tree models to understand what factors contribute to biscuit consumption
 
 ## Findings
 - Participants in the dissatisfying rehearsal group tend to be hungrier after lunch (see scatter chart below).

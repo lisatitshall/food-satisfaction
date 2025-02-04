@@ -4,6 +4,10 @@ library(tidyverse)
 library(haven)
 #skewness
 library(moments)
+#trees
+library(tree)
+library(rpart)
+library(rpart.plot)
 
 #import data
 food_satisfaction_raw <- read_sav("data/RememberedMealSatisfaction.sav")
@@ -593,3 +597,122 @@ summary(aov_snack_kcal_diff)
 #general satisfaction
 #this would include looking at raw hunger levels rather than differences
 
+
+#reduce dataset to only include important/numerical variables
+food_satisfaction_amended_reduced <- food_satisfaction_amended %>%
+  select(Sens_exclu_aims:Condition, Gender:BMI, 
+         Hunger_pre_lunch:Hunger_post_taste_test, Pasta_ate_percentage:AgeGroup)
+
+#build tree to see what's important for biscuit consumption
+rpart_biscuit_consumption = rpart(Snack_kcal ~ ., 
+                                  data = food_satisfaction_amended_reduced, 
+                                  method = "anova")
+
+#interestingly condition isn't here at all
+prp(rpart_biscuit_consumption)
+
+#plot error curve
+plotcp(rpart_biscuit_consumption)
+
+#complexity relates to improvement in R2 for ANOVA
+View(rpart_biscuit_consumption$frame)
+
+#this matrix gives information on optimal prunings
+#rel error is 1 - R2
+#xerr shows which steps reduce/increase error
+#xstd is cross validated error
+View(rpart_biscuit_consumption$cptable)
+
+#find CP for min error
+#alternative is to find smallest tree within 1 S.E of tree with smallest error
+min_cp = rpart_biscuit_consumption$cptable[
+  which.min(rpart_biscuit_consumption$cptable[,"xerror"]),"CP"]
+
+#prune tree
+rpart_biscuit_consumption_prune = prune(rpart_biscuit_consumption, 
+                                        cp = min_cp)
+
+#only two variables remain: hunger pre taste test and cognitive restraint
+prp(rpart_biscuit_consumption_prune)
+
+#this shows primary splits and surrogate splits
+#primary splits are the alternatives not chosen at each node
+#surrogate splits show which variables are closely related 
+# e.g. hunger pre taste test is related to remembered lunchtime satiety
+summary(rpart_biscuit_consumption_prune)
+
+#alternative way of plotting which shows how much data in each leaf
+rpart.plot(rpart_biscuit_consumption_prune)
+
+#try subset to only include those who described what they were supposed to
+rpart_biscuit_consumption_correct_desc = rpart(Snack_kcal ~ ., 
+                                  data = food_satisfaction_amended_reduced, 
+                                  method = "anova",
+                                  subset = (Rehearsal_exclu_exploratory==0)
+                                  )
+
+#interestingly condition isn't here at all
+prp(rpart_biscuit_consumption_correct_desc)
+
+#plot error curve
+plotcp(rpart_biscuit_consumption_correct_desc)
+
+#complexity relates to improvement in R2 for ANOVA
+View(rpart_biscuit_consumption_correct_desc$frame)
+
+#optimal prunings
+View(rpart_biscuit_consumption_correct_desc$cptable)
+
+#find CP for min error
+min_cp_2 = rpart_biscuit_consumption_correct_desc$cptable[
+  which.min(rpart_biscuit_consumption_correct_desc$cptable[,"xerror"]),"CP"]
+
+#prune tree
+rpart_biscuit_consumption_correct_desc_prune = 
+  prune(rpart_biscuit_consumption_correct_desc, cp = min_cp_2)
+
+#only hunger pre taste test remains
+prp(rpart_biscuit_consumption_correct_desc_prune)
+
+#this shows primary splits and surrogate splits
+summary(rpart_biscuit_consumption_correct_desc_prune)
+
+#alternative way of plotting which shows how much data in each leaf
+rpart.plot(rpart_biscuit_consumption_correct_desc_prune)
+
+#try subset by condition 1/2 
+rpart_biscuit_consumption_condition = rpart(Snack_kcal ~ ., 
+                                               data = food_satisfaction_amended_reduced, 
+                                               method = "anova",
+                                               subset = (Condition %in% c(1,2))
+)
+
+#still hunger pre taste test but also general satisfaction
+prp(rpart_biscuit_consumption_condition)
+
+#general satisfaction is now slightly more important than cognitive restraint
+summary(rpart_biscuit_consumption_condition)
+
+#plot error curve
+plotcp(rpart_biscuit_consumption_condition)
+
+#complexity relates to improvement in R2 for ANOVA
+View(rpart_biscuit_consumption_condition$frame)
+
+#optimal prunings
+View(rpart_biscuit_consumption_condition$cptable)
+
+#find CP for min error
+min_cp_3 = rpart_biscuit_consumption_condition$cptable[
+  which.min(rpart_biscuit_consumption_condition$cptable[,"xerror"]),"CP"]
+
+#prune tree
+rpart_biscuit_consumption_condition_prune = 
+  prune(rpart_biscuit_consumption_condition, cp = min_cp_3)
+
+#nothing remains!
+prp(rpart_biscuit_consumption_condition_prune)
+
+
+#try conditional inference tree method (suggestion that CART chooses variables
+#  with more splits - could be why we didn't get condition??)

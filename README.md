@@ -80,4 +80,5 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 
 ![image](https://github.com/user-attachments/assets/50fb436c-e23e-4712-ada8-a00e11c7cfbf)
 
+- A recursive partitioning tree was then fitted to predict biscuit consumption only in the satisfying and dissatisfying rehearsal groups. In this case hunger pre taste test was still the most important variable. The second variable was remembered lunchtime satisfaction instead of cognitive restraint. This variable was significantly different by category (only for participants who described what they were asked to). However, even in this case the improvement of remembered lunchtime satisfaction over cognitive restraint was minimal and only a small proportion of the difference in biscuit consumption was described by the model. 
 

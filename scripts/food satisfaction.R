@@ -8,6 +8,8 @@ library(moments)
 library(tree)
 library(rpart)
 library(rpart.plot)
+#conditional inference tree
+library(partykit)
 
 #import data
 food_satisfaction_raw <- read_sav("data/RememberedMealSatisfaction.sav")
@@ -252,6 +254,9 @@ food_satisfaction_amended$Rehearsal_exclu_exploratory <-
 
 food_satisfaction_amended$Sens_exclu_aims <- 
   factor(food_satisfaction_amended$Sens_exclu_aims)
+
+food_satisfaction_amended$Gender <- 
+  factor(food_satisfaction_amended$Gender)
 
 #plot pre/post lunch hunger against category
 #as we'd expect negative descriptions(2) are more hungry after lunch
@@ -713,6 +718,18 @@ rpart_biscuit_consumption_condition_prune =
 #nothing remains!
 prp(rpart_biscuit_consumption_condition_prune)
 
-
 #try conditional inference tree method (suggestion that CART chooses variables
-#  with more splits - could be why we didn't get condition??)
+#  with more splits - could be why we didn't get condition?)
+
+ci_tree <- ctree(Snack_kcal ~ ., data = food_satisfaction_amended_reduced)
+
+#only one variable is chosen, hunger pre taste test
+print(ci_tree)
+
+plot(ci_tree)
+
+#the following control attributes didn't change the results significantly
+# but sometimes included gender
+# teststat, splitstat
+# testtype "teststatistic" included more variables but only
+#   hunger post lunch could be connected to the condition group

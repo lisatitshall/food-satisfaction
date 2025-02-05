@@ -10,6 +10,9 @@ library(rpart)
 library(rpart.plot)
 #conditional inference tree
 library(partykit)
+#factor analysis of mixed data
+library(factoextra)
+library(FactoMineR)
 
 #import data
 food_satisfaction_raw <- read_sav("data/RememberedMealSatisfaction.sav")
@@ -597,7 +600,7 @@ aov_snack_kcal_diff <- aov(
   data = food_satisfaction_amended)
 summary(aov_snack_kcal_diff)
 
-#Ideas: look at tree / principal component analysis to see which measures  
+#Ideas: look at tree / factor analysis of mixed data to see which measures  
 #are most important in determining biscuit consumption / changes in hunger/
 #general satisfaction
 #this would include looking at raw hunger levels rather than differences
@@ -656,7 +659,7 @@ rpart_biscuit_consumption_correct_desc = rpart(Snack_kcal ~ .,
                                   subset = (Rehearsal_exclu_exploratory==0)
                                   )
 
-#interestingly condition isn't here at all
+#condition not here
 prp(rpart_biscuit_consumption_correct_desc)
 
 #plot error curve
@@ -733,3 +736,48 @@ plot(ci_tree)
 # teststat, splitstat
 # testtype "teststatistic" included more variables but only
 #   hunger post lunch could be connected to the condition group
+
+
+#this is what we'd expect given only stat. significant result we saw
+ci_tree_general <- ctree(General_satisfaction ~ ., 
+                         data = food_satisfaction_amended_reduced,
+                         subset=(Rehearsal_exclu_exploratory == 0))
+
+plot(ci_tree_general)
+
+#no significant variables, no matter the subset
+ci_tree_lunch_hunger <- ctree(Hunger_post_lunch - Hunger_pre_lunch ~ ., 
+                         data = food_satisfaction_amended_reduced %>%
+                           select(!Hunger_post_lunch, !Hunger_pre_lunch),
+                         subset=(Condition %in% c(1,2))
+                         )
+plot(ci_tree_lunch_hunger)
+
+#try factor analysis of mixed data
+#impute 2 missing pasta % with mean
+food_satisfaction_amended_reduced$Pasta_ate_percentage_no_nulls <- 
+  replace(food_satisfaction_amended_reduced$Pasta_ate_percentage,
+          is.na(food_satisfaction_amended_reduced$Pasta_ate_percentage),
+          mean(food_satisfaction_amended_reduced$Pasta_ate_percentage, na.rm = TRUE))
+
+food_satisfaction_amended_reduced <- food_satisfaction_amended_reduced %>%
+  select(!Pasta_ate_percentage)
+  
+factor_analysis <- FAMD(food_satisfaction_amended_reduced %>% 
+                          select(!Snack_kcal), graph = TRUE)
+
+#the top 5 principal components only account for 49% of variance
+#the top 2 account for 25% of variance
+print(factor_analysis$eig)
+
+#plot how much variance each component accounts for
+fviz_screeplot(factor_analysis)
+
+#get variable contributions
+factor_analysis_var <- get_famd_var(factor_analysis)
+
+#condition contributes most to 3rd dimension
+factor_analysis_var$contrib
+
+#show which variables contribute most to first 2 dimensions
+fviz_famd_var(factor_analysis, repel = TRUE)

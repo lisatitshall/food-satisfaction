@@ -27,6 +27,7 @@ Full details of the study can be found in the Data folder.
   - Participants generally remembered being full after lunch but there was a wider range of satisfaction levels (again, not surprising, you can be full without particularly enjoying a meal)
 - Step 3: Plot multivariate graphs to look for relationships
 - Step 4: Fit tree models to understand what factors contribute to biscuit consumption
+- Step 5: Perform Factor Analysis of Mixed Data 
 
 ## Findings
 - Participants in the dissatisfying rehearsal group tend to be hungrier after lunch (see scatter chart below).
@@ -86,3 +87,11 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 - CART trees can be biased towards variables who have more cutpoints. Therefore, a conditional inference tree was also plotted. In this case only variables which have a statistically significant relationship with the response variable are included in the tree. Only pre taste test hunger was included in this tree (see plot below). This didn't change significantly after trying different model parameters and condition was not included in any of the trees.
   
 ![image](https://github.com/user-attachments/assets/eb2bbd0f-0330-4dbf-9efc-d45b3db3172c)
+
+- Factor Analysis of Mixed Data was performed to try and explain the dataset in fewer dimensions. The top two principal components only accounted for 25% of the data variance (see scree plot below). Even the top 5 components only accounted for 50% of variation. Also, Condition wasn't an important variable until the third dimension. The final chart below shows which variables were most important in the top 2 dimensions. The results are similar to what we saw when plotting trees. 
+
+![image](https://github.com/user-attachments/assets/6955d047-3178-417b-83f6-374a6dbe8a0e)
+
+![image](https://github.com/user-attachments/assets/790cf873-e114-4826-8b3d-0d05ec3ab404)
+
+- Overall, we've seen that the remembered lunch satisfaction was related to the group participants were put in (but only if they described what they were supposed to). However, this didn't have a knock on impact on the amount of biscuits that were consumed. There doesn't appear to be a simple combination of variables that can explain the majority of variation in biscuit consumption. 

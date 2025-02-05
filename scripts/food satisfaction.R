@@ -781,3 +781,7 @@ factor_analysis_var$contrib
 
 #show which variables contribute most to first 2 dimensions
 fviz_famd_var(factor_analysis, repel = TRUE)
+
+
+#understand how sample size was chosen
+pwr.anova.test(k = 3, f = 0.3, sig.level = 0.05, power = 0.8)

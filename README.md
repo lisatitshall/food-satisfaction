@@ -83,3 +83,6 @@ As expected, there wasn't much difference in remembered lunch satiety between gr
 
 - A recursive partitioning tree was then fitted to predict biscuit consumption only in the satisfying and dissatisfying rehearsal groups. In this case hunger pre taste test was still the most important variable. The second variable was remembered lunchtime satisfaction instead of cognitive restraint. This variable was significantly different by category (only for participants who described what they were asked to). However, even in this case the improvement of remembered lunchtime satisfaction over cognitive restraint was minimal and only a small proportion of the difference in biscuit consumption was described by the model. 
 
+- CART trees can be biased towards variables who have more cutpoints. Therefore, a conditional inference tree was also plotted. In this case only variables which have a statistically significant relationship with the response variable are included in the tree. Only pre taste test hunger was included in this tree (see plot below). This didn't change significantly after trying different model parameters and condition was not included in any of the trees.
+  
+![image](https://github.com/user-attachments/assets/eb2bbd0f-0330-4dbf-9efc-d45b3db3172c)
